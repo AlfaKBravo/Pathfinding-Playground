@@ -15,239 +15,210 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="css/style.css?v=2">
+  <link rel="stylesheet" href="css/style.css?v=3">
   <script>
     document.documentElement.classList.add('js');
     try { var t = localStorage.getItem('theme'); if (t) document.documentElement.dataset.theme = t; } catch (e) {}
   </script>
-  <script type="module" src="js/main.js?v=2"></script>
+  <script type="module" src="js/main.js?v=3"></script>
 </head>
 <body>
-  <a class="skip" href="#play">Skip to the playground</a>
+  <a class="skip" href="#bench">Skip to the playground</a>
+  <h1 class="sr-only">Pathfinding &amp; Game AI Playground</h1>
 
-  <!-- ===== MASTHEAD ===== -->
+  <!-- ===== HEADER: brand, mode, links ===== -->
   <header class="masthead">
-    <div class="wrap masthead-in">
+    <div class="masthead-in">
       <a href="https://github.com/AlfaKBravo" class="brand" id="portfolioLink" aria-label="Akshaj Kumar Bhardwaj, back to portfolio">
         <span class="brand-mark">AB</span>
-        <span class="brand-txt">Pathfinding Playground<small>Technical sheet · Project 01</small></span>
+        <span class="brand-txt">Pathfinding Playground<small>Project 01 · Search &amp; game AI</small></span>
       </a>
-      <div class="masthead-act">
-        <a href="https://github.com/AlfaKBravo/Pathfinding-Playground" class="btn btn-sm hide-sm" target="_blank" rel="noopener">Source code</a>
+
+      <fieldset class="seg mode-tabs">
+        <legend class="sr-only">Mode</legend>
+        <label><input type="radio" name="mode" value="search" checked><span>Search</span></label>
+        <label><input type="radio" name="mode" value="chase"><span>Chase</span></label>
+      </fieldset>
+
+      <nav class="masthead-act" aria-label="Site">
+        <a href="#manual" class="nav-link hide-sm">How it works</a>
+        <a href="https://github.com/AlfaKBravo/Pathfinding-Playground" class="nav-link hide-sm" target="_blank" rel="noopener">Source ↗</a>
         <button class="sq-btn" id="themeToggle" aria-label="Switch between blueprint and light theme">
           <svg class="i-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
           <svg class="i-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
         </button>
-      </div>
+      </nav>
     </div>
   </header>
 
-  <main id="main">
-    <!-- ===== COVER ===== -->
-    <section class="cover">
-      <div class="wrap">
-        <p class="cover-strip" aria-hidden="true">
-          <span>Drawing PF-01</span><span>Sheet 1 of 2</span><span>Scale 1 : 1</span>
+  <!-- ===== WORKBENCH ===== -->
+  <main class="workbench" id="play">
+    <aside class="rail" aria-label="Drawing tools">
+      <fieldset class="rail-group">
+        <legend class="field-label">Draw</legend>
+        <div class="tools">
+          <label class="tool"><input type="radio" name="tool" value="wall" checked><span><canvas data-swatch="wall" aria-hidden="true"></canvas>Wall<kbd>1</kbd></span></label>
+          <label class="tool"><input type="radio" name="tool" value="mud"><span><canvas data-swatch="mud" aria-hidden="true"></canvas>Mud ×5<kbd>2</kbd></span></label>
+          <label class="tool"><input type="radio" name="tool" value="erase"><span><canvas data-swatch="erase" aria-hidden="true"></canvas>Erase<kbd>3</kbd></span></label>
+        </div>
+        <p class="rail-hint" id="boardHelp">
+          <span data-mode="search">Drag on the grid to draw. Drag <b>S</b> and <b>G</b> to move them.
+            <span class="kbd-help">Keyboard: focus the grid, arrows move the cursor, Space draws, S or G places the start or goal.</span></span>
+          <span data-mode="chase" hidden>Draw walls while the chase runs. Drag <b>C</b> or <b>T</b> to place them.</span>
         </p>
-        <div class="cover-head">
-          <div>
-            <p class="kicker">Project 01 · Search algorithms &amp; game AI</p>
-            <h1>Pathfinding <em>Playground</em></h1>
-          </div>
-          <p class="lede">Draw walls, pour mud, and watch BFS, Dijkstra and A* find their way to the goal. Then switch to Chase and let an A* hunter come after you.</p>
+      </fieldset>
+
+      <div class="rail-group">
+        <span class="field-label" id="boardLabel">Board</span>
+        <div class="board-actions" role="group" aria-labelledby="boardLabel">
+          <button class="btn btn-sm btn-quiet" id="mazeBtn">Maze</button>
+          <button class="btn btn-sm btn-quiet" id="demoBtn">Demo</button>
+          <button class="btn btn-sm btn-quiet" id="importBtn">Import</button>
+          <button class="btn btn-sm btn-quiet" id="exportBtn">Export</button>
+          <button class="btn btn-sm btn-quiet span-2" id="clearBoardBtn">Clear board</button>
+          <input type="file" id="importFile" accept=".json,application/json" hidden>
         </div>
       </div>
-    </section>
+    </aside>
 
-    <!-- ===== PLAYGROUND ===== -->
-    <section class="page play" id="play" aria-labelledby="playTitle">
-      <div class="wrap">
-        <header class="page-head">
-          <h2 id="playTitle">Playground</h2>
-          <p class="folio"><span>Sheet 01</span> Free play</p>
-        </header>
+    <section class="bench" id="bench" aria-label="Playground">
+      <!-- command bar: search mode -->
+      <div class="command" data-mode="search">
+        <div class="cmd-field">
+          <label class="field-label" for="algoA">Algorithm</label>
+          <select id="algoA" class="select"></select>
+        </div>
+        <label class="check"><input type="checkbox" id="compare"> Compare side by side</label>
+        <div class="cmd-field" id="algoBField" hidden>
+          <label class="field-label" for="algoB">With</label>
+          <select id="algoB" class="select"></select>
+        </div>
+        <div class="cmd-spacer"></div>
+        <div class="cmd-field cmd-range">
+          <label class="field-label" for="speed">Speed</label>
+          <input type="range" id="speed" min="1" max="10" value="6">
+          <output id="speedOut" for="speed"></output>
+        </div>
+        <div class="cmd-buttons">
+          <button class="btn" id="clearPathBtn">Clear</button>
+          <button class="btn" id="stepBtn">Step</button>
+          <button class="btn" id="pauseBtn" disabled>Pause</button>
+          <button class="btn btn-a btn-run" id="runBtn"><svg viewBox="0 0 14 14" width="14" height="14" aria-hidden="true"><path d="M2 1l11 6-11 6z" fill="currentColor"/></svg><span class="label">Run</span></button>
+        </div>
+      </div>
 
-        <div class="play-grid">
-          <div class="boards-col">
-            <p class="status" id="status" role="status" aria-live="polite">Press Run to watch the search.</p>
+      <!-- command bar: chase mode -->
+      <div class="command" data-mode="chase" hidden>
+        <fieldset class="cmd-field">
+          <legend class="field-label">Target</legend>
+          <div class="seg">
+            <label><input type="radio" name="targetMode" value="player" checked><span>You</span></label>
+            <label><input type="radio" name="targetMode" value="flee"><span>Flee AI</span></label>
+          </div>
+        </fieldset>
+        <div class="cmd-spacer"></div>
+        <div class="cmd-field cmd-range">
+          <label class="field-label" for="chaserSpeed">Chaser speed</label>
+          <input type="range" id="chaserSpeed" min="1" max="10" value="4">
+          <output id="chaserSpeedOut" for="chaserSpeed"></output>
+        </div>
+        <div class="cmd-buttons">
+          <button class="btn" id="chaseResetBtn">Reset</button>
+          <button class="btn btn-a btn-run" id="chaseBtn"><svg viewBox="0 0 14 14" width="14" height="14" aria-hidden="true"><path d="M2 1l11 6-11 6z" fill="currentColor"/></svg><span class="label">Start chase</span></button>
+        </div>
+      </div>
 
-            <div class="boards" id="boards">
-              <figure class="board">
-                <canvas class="board-canvas" tabindex="0" aria-describedby="boardHelp"></canvas>
-                <figcaption><b>Fig. 1-A</b> <span class="board-name"></span></figcaption>
-                <dl class="stats" aria-label="Run statistics">
-                  <div><dt></dt><dd>–</dd></div>
-                  <div><dt></dt><dd>–</dd></div>
-                  <div><dt></dt><dd>–</dd></div>
-                  <div><dt></dt><dd>–</dd></div>
-                </dl>
-              </figure>
-              <figure class="board" hidden>
-                <canvas class="board-canvas" tabindex="0" aria-describedby="boardHelp"></canvas>
-                <figcaption><b>Fig. 1-B</b> <span class="board-name"></span></figcaption>
-                <dl class="stats" aria-label="Run statistics for the second algorithm">
-                  <div><dt></dt><dd>–</dd></div>
-                  <div><dt></dt><dd>–</dd></div>
-                  <div><dt></dt><dd>–</dd></div>
-                  <div><dt></dt><dd>–</dd></div>
-                </dl>
-              </figure>
-            </div>
+      <p class="status" id="status" role="status" aria-live="polite">Press Run to watch the search.</p>
 
-            <div class="dpad" id="dpad" hidden>
+      <div class="boards" id="boards">
+        <figure class="board">
+          <canvas class="board-canvas" tabindex="0" aria-describedby="boardHelp"></canvas>
+          <div class="title-block">
+            <figcaption class="tb-fig"><b>Fig. 1-A</b><span class="board-name"></span></figcaption>
+            <dl class="stats" aria-label="Run statistics">
+              <div><dt></dt><dd>–</dd></div>
+              <div><dt></dt><dd>–</dd></div>
+              <div><dt></dt><dd>–</dd></div>
+              <div><dt></dt><dd>–</dd></div>
+            </dl>
+            <div class="dpad" id="dpad" role="group" aria-label="Move target" hidden>
               <button class="btn pad-btn" data-dir="up" aria-label="Move target up">▲</button>
               <button class="btn pad-btn" data-dir="left" aria-label="Move target left">◀</button>
               <button class="btn pad-btn" data-dir="down" aria-label="Move target down">▼</button>
               <button class="btn pad-btn" data-dir="right" aria-label="Move target right">▶</button>
             </div>
-
-            <p class="hint" id="boardHelp">
-              <span data-mode="search">Drag on the board to draw. Drag <b>S</b> and <b>G</b> to move the start and goal.
-                <span class="kbd-help">Keyboard: focus the board, move the cursor with the arrow keys, press Space to draw, S or G to place the start or goal.</span></span>
-              <span data-mode="chase" hidden>Move <b>T</b> with the arrow keys, WASD or the pad. Drag <b>C</b> or <b>T</b> to place them. You can draw walls while the chase runs.</span>
-            </p>
           </div>
-
-          <aside class="sheet panel" aria-label="Controls">
-            <h3 class="sheet-title">Controls</h3>
-            <div class="panel-body">
-              <fieldset class="field">
-                <legend class="field-label">Mode</legend>
-                <div class="seg">
-                  <label><input type="radio" name="mode" value="search" checked><span>Search</span></label>
-                  <label><input type="radio" name="mode" value="chase"><span>Chase</span></label>
-                </div>
-              </fieldset>
-
-              <!-- search mode -->
-              <div class="group" data-mode="search">
-                <div class="field">
-                  <label class="field-label" for="algoA">Algorithm</label>
-                  <select id="algoA" class="select"></select>
-                </div>
-                <label class="check"><input type="checkbox" id="compare"> Compare with a second algorithm</label>
-                <div class="field" id="algoBField" hidden>
-                  <label class="field-label" for="algoB">Second algorithm</label>
-                  <select id="algoB" class="select"></select>
-                </div>
-                <div class="btn-row">
-                  <button class="btn btn-a" id="runBtn">Run</button>
-                  <button class="btn btn-sm" id="pauseBtn" disabled>Pause</button>
-                  <button class="btn btn-sm" id="stepBtn">Step</button>
-                  <button class="btn btn-sm" id="clearPathBtn">Clear path</button>
-                </div>
-                <div class="field">
-                  <label class="field-label" for="speed">Speed <output id="speedOut" for="speed"></output></label>
-                  <input type="range" id="speed" min="1" max="10" value="6">
-                </div>
-              </div>
-
-              <!-- chase mode -->
-              <div class="group" data-mode="chase" hidden>
-                <fieldset class="field">
-                  <legend class="field-label">Target</legend>
-                  <div class="seg">
-                    <label><input type="radio" name="targetMode" value="player" checked><span>You</span></label>
-                    <label><input type="radio" name="targetMode" value="flee"><span>Flee AI</span></label>
-                  </div>
-                </fieldset>
-                <div class="btn-row">
-                  <button class="btn btn-a" id="chaseBtn"><span class="label">Start chase</span></button>
-                  <button class="btn btn-sm" id="chaseResetBtn">Reset</button>
-                </div>
-                <div class="field">
-                  <label class="field-label" for="chaserSpeed">Chaser speed <output id="chaserSpeedOut" for="chaserSpeed"></output></label>
-                  <input type="range" id="chaserSpeed" min="1" max="10" value="4">
-                </div>
-              </div>
-
-              <fieldset class="field">
-                <legend class="field-label">Draw</legend>
-                <div class="seg seg-3">
-                  <label><input type="radio" name="tool" value="wall" checked><span>Wall</span></label>
-                  <label><input type="radio" name="tool" value="mud"><span>Mud ×5</span></label>
-                  <label><input type="radio" name="tool" value="erase"><span>Erase</span></label>
-                </div>
-              </fieldset>
-
-              <div class="field">
-                <span class="field-label" id="boardLabel">Board</span>
-                <div class="btn-row" role="group" aria-labelledby="boardLabel">
-                  <button class="btn btn-sm" id="mazeBtn">Maze</button>
-                  <button class="btn btn-sm" id="demoBtn">Demo map</button>
-                  <button class="btn btn-sm" id="clearBoardBtn">Clear board</button>
-                  <button class="btn btn-sm" id="exportBtn">Export JSON</button>
-                  <button class="btn btn-sm" id="importBtn">Import JSON</button>
-                  <input type="file" id="importFile" accept=".json,application/json" hidden>
-                </div>
-              </div>
-            </div>
-          </aside>
-        </div>
+        </figure>
+        <figure class="board" hidden>
+          <canvas class="board-canvas" tabindex="0" aria-describedby="boardHelp"></canvas>
+          <div class="title-block">
+            <figcaption class="tb-fig"><b>Fig. 1-B</b><span class="board-name"></span></figcaption>
+            <dl class="stats" aria-label="Run statistics for the second algorithm">
+              <div><dt></dt><dd>–</dd></div>
+              <div><dt></dt><dd>–</dd></div>
+              <div><dt></dt><dd>–</dd></div>
+              <div><dt></dt><dd>–</dd></div>
+            </dl>
+          </div>
+        </figure>
       </div>
-    </section>
 
-    <!-- ===== MANUAL ===== -->
-    <section class="page" id="manual">
-      <div class="wrap">
-        <header class="page-head">
-          <h2>How it works</h2>
-          <p class="folio"><span>Sheet 02</span> Manual</p>
-        </header>
-
-        <div class="manual-grid">
-          <div>
-            <h3 class="rule-title">Legend</h3>
-            <ul class="legend">
-              <li><canvas data-swatch="start" aria-hidden="true"></canvas>Start</li>
-              <li><canvas data-swatch="goal" aria-hidden="true"></canvas>Goal</li>
-              <li><canvas data-swatch="wall" aria-hidden="true"></canvas>Wall: blocked</li>
-              <li><canvas data-swatch="mud" aria-hidden="true"></canvas>Mud: costs 5 to enter</li>
-              <li><canvas data-swatch="frontier" aria-hidden="true"></canvas>Frontier: found, not yet visited</li>
-              <li><canvas data-swatch="visited" aria-hidden="true"></canvas>Visited: expanded by the search</li>
-              <li><canvas data-swatch="path" aria-hidden="true"></canvas>Path: the route found</li>
-              <li><canvas data-swatch="chaser" aria-hidden="true"></canvas>Chaser (Chase mode)</li>
-              <li><canvas data-swatch="target" aria-hidden="true"></canvas>Target (Chase mode)</li>
-            </ul>
-          </div>
-
-          <div>
-            <h3 class="rule-title">The algorithms</h3>
-            <ol class="algos">
-              <li>
-                <h4>Breadth-first search</h4>
-                <p>Explores in rings: every cell one step away, then two, then three. A queue keeps the order. The first route to reach the goal has the fewest steps, but BFS counts mud as one step, so it walks straight through it.</p>
-              </li>
-              <li>
-                <h4>Dijkstra's algorithm</h4>
-                <p>Always expands the cheapest cell found so far, using a priority queue (a binary heap). Costs add up correctly, so it returns the lowest-cost path and goes around mud when that is cheaper. It searches evenly in every direction.</p>
-              </li>
-              <li>
-                <h4>A* search</h4>
-                <p>Dijkstra plus a sense of direction. Each cell is ranked by cost so far plus an estimate of what is left, the Manhattan distance to the goal. The estimate never overshoots, so the path is still the cheapest, but cells leading away from the goal are rarely touched. Run it next to Dijkstra with <b>Compare</b> to see the difference.</p>
-              </li>
-            </ol>
-          </div>
-        </div>
-
-        <div class="manual-grid manual-grid-2">
-          <div>
-            <h3 class="rule-title">Chase mode</h3>
-            <p class="prose-p">The chaser <b>C</b> runs A* to the target <b>T</b> and walks the path. Each time the target moves or a wall changes, it plans again; the dashed line is its current plan. Mud slows both of you. Pick <b>Flee AI</b> to watch a target that runs on its own, choosing the cell the chaser would take longest to reach.</p>
-          </div>
-          <div>
-            <h3 class="rule-title">Maps</h3>
-            <p class="prose-p"><b>Maze</b> builds a perfect maze with the recursive backtracker. <b>Export JSON</b> saves the board to a file and <b>Import JSON</b> loads one back, so you can share a tricky map.</p>
-          </div>
-        </div>
-      </div>
+      <ul class="legend" data-mode="search" aria-label="Legend">
+        <li><canvas data-swatch="start" aria-hidden="true"></canvas>Start</li>
+        <li><canvas data-swatch="goal" aria-hidden="true"></canvas>Goal</li>
+        <li><canvas data-swatch="wall" aria-hidden="true"></canvas>Wall</li>
+        <li><canvas data-swatch="mud" aria-hidden="true"></canvas>Mud · cost 5</li>
+        <li><canvas data-swatch="frontier" aria-hidden="true"></canvas>Frontier</li>
+        <li><canvas data-swatch="visited" aria-hidden="true"></canvas>Visited</li>
+        <li><canvas data-swatch="path" aria-hidden="true"></canvas>Path</li>
+      </ul>
+      <ul class="legend" data-mode="chase" aria-label="Legend" hidden>
+        <li><canvas data-swatch="chaser" aria-hidden="true"></canvas>Chaser</li>
+        <li><canvas data-swatch="target" aria-hidden="true"></canvas>Target</li>
+        <li><canvas data-swatch="plan" aria-hidden="true"></canvas>Planned path</li>
+        <li><canvas data-swatch="visited" aria-hidden="true"></canvas>Last replan's search</li>
+        <li><canvas data-swatch="mud" aria-hidden="true"></canvas>Mud slows both</li>
+      </ul>
     </section>
   </main>
 
+  <!-- ===== MANUAL ===== -->
+  <section class="manual" id="manual" aria-labelledby="manualTitle">
+    <div class="manual-in">
+      <header class="manual-head">
+        <h2 id="manualTitle">How it works</h2>
+        <p class="folio">Sheet 02 · Manual</p>
+      </header>
+
+      <div class="algos">
+        <article class="algo">
+          <span class="algo-no">01</span>
+          <h3>Breadth-first search</h3>
+          <p>Explores in rings: every cell one step away, then two, then three. A queue keeps the order. The first route to the goal has the fewest steps, but BFS counts mud as one step, so it walks straight through it.</p>
+        </article>
+        <article class="algo">
+          <span class="algo-no">02</span>
+          <h3>Dijkstra's algorithm</h3>
+          <p>Always expands the cheapest cell found so far, using a priority queue (a binary heap). It returns the lowest-cost path and goes around mud when that is cheaper. It searches evenly in every direction.</p>
+        </article>
+        <article class="algo algo-hi">
+          <span class="algo-no">03</span>
+          <h3>A* search</h3>
+          <p>Dijkstra plus a sense of direction: cells are ranked by cost so far plus the Manhattan distance left. The estimate never overshoots, so the path is still the cheapest, but cells leading away from the goal are rarely touched. Tick <b>Compare side by side</b> to see it next to Dijkstra.</p>
+        </article>
+      </div>
+
+      <div class="notes">
+        <p><b>Chase mode.</b> The chaser C runs A* to the target T and walks the path. Each time the target moves or a wall changes, it plans again; the dashed line is its current plan. Mud slows you both. Pick <b>Flee AI</b> to watch a target that runs on its own.</p>
+        <p><b>Maps.</b> <b>Maze</b> builds a perfect maze with the recursive backtracker. <b>Export</b> saves the board as JSON and <b>Import</b> loads one back, so you can share a tricky map.</p>
+      </div>
+    </div>
+  </section>
+
   <footer class="colophon">
-    <div class="wrap colophon-in">
-      <p>© <span id="year">2026</span> Akshaj Kumar Bhardwaj. Plain JavaScript on a canvas.</p>
-      <p><a href="https://github.com/AlfaKBravo/Pathfinding-Playground" target="_blank" rel="noopener">Source on GitHub →</a></p>
+    <div class="colophon-in">
+      <p>© <span id="year">2026</span> Akshaj Kumar Bhardwaj · Plain JavaScript on a canvas</p>
+      <p><a href="https://github.com/AlfaKBravo/Pathfinding-Playground" target="_blank" rel="noopener">Source on GitHub ↗</a></p>
     </div>
   </footer>
 </body>

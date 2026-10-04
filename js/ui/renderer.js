@@ -263,6 +263,25 @@ export function drawSwatch(canvas, kind) {
   if (kind === 'mud') drawMud(ctx, 0, 0, size, t.ink2);
   if (kind === 'visited') drawVisited(ctx, 0, 0, size, size, size, t.ink);
   if (kind === 'frontier') drawFrontier(ctx, 0, 0, size, t.spot);
+  if (kind === 'erase') {
+    ctx.strokeStyle = t.ink2;
+    ctx.lineWidth = Math.max(1.5, size * 0.08);
+    ctx.beginPath();
+    ctx.moveTo(size * 0.25, size * 0.25);
+    ctx.lineTo(size * 0.75, size * 0.75);
+    ctx.moveTo(size * 0.75, size * 0.25);
+    ctx.lineTo(size * 0.25, size * 0.75);
+    ctx.stroke();
+  }
+  if (kind === 'plan') {
+    ctx.strokeStyle = t.spot;
+    ctx.lineWidth = Math.max(2, size * 0.14);
+    ctx.setLineDash([size * 0.25, size * 0.17]);
+    ctx.beginPath();
+    ctx.moveTo(0, size / 2);
+    ctx.lineTo(size, size / 2);
+    ctx.stroke();
+  }
   if (kind === 'path') {
     ctx.strokeStyle = t.spotInk;
     ctx.lineWidth = Math.max(2, size * 0.16);

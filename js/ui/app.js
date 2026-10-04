@@ -5,7 +5,7 @@ import { generateMaze } from '../core/maze.js';
 import { demoMap } from '../core/presets.js';
 import { Chase } from '../core/chase.js';
 import { Playback, VISITED } from './playback.js';
-import { Renderer } from './renderer.js?v=2';
+import { Renderer } from './renderer.js?v=3';
 
 /** Animation speeds for the speed slider, in search steps per second. */
 const SPEEDS = [2, 5, 10, 20, 40, 80, 160, 320, 640, 1500];
@@ -389,6 +389,15 @@ export class App {
 
   /** Arrow keys and WASD steer the target in Chase mode. */
   bindKeys() {
+    // 1, 2, 3 pick the Wall, Mud and Erase tools
+    window.addEventListener('keydown', (e) => {
+      if (e.altKey || e.ctrlKey || e.metaKey || /^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName)) return;
+      const tool = { 1: 'wall', 2: 'mud', 3: 'erase' }[e.key];
+      if (!tool) return;
+      const radio = document.querySelector(`input[name="tool"][value="${tool}"]`);
+      radio.checked = true;
+      this.tool = tool;
+    });
     window.addEventListener('keydown', (e) => {
       if (this.mode !== 'chase' || e.altKey || e.ctrlKey || e.metaKey) return;
       if (/^(INPUT|SELECT|TEXTAREA)$/.test(e.target.tagName)) return;
@@ -663,12 +672,16 @@ export class App {
 
   updateNames() {
     if (this.mode === 'chase') {
-      this.views[0].name.textContent = 'Chase: A* chaser, replans on every move';
+      this.views[0].name.textContent = 'A* chaser';
       return;
     }
     this.views.forEach((v) => {
       v.name.textContent = getAlgorithm(v.algo).name;
     });
+    const short = (v) => getAlgorithm(v.algo).short;
+    this.el.run.querySelector('.label').textContent = this.compare
+      ? `Run ${short(this.views[0])} + ${short(this.views[1])}`
+      : `Run ${short(this.views[0])}`;
   }
 
   updateControls() {
