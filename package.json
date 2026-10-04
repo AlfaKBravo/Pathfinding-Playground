@@ -1,0 +1,15 @@
+{
+  "name": "pathfinding-playground",
+  "version": "1.0.0",
+  "description": "Browser playground that animates BFS, Dijkstra and A* on a grid, with an A* chaser that hunts a player-controlled target.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test"
+  },
+  "author": "Akshaj Kumar Bhardwaj",
+  "license": "MIT",
+  "engines": {
+    "node": ">=20"
+  }
+}
