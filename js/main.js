@@ -1,5 +1,5 @@
-import { App } from './ui/app.js';
-import { drawSwatch } from './ui/renderer.js';
+import { App } from './ui/app.js?v=2';
+import { drawSwatch } from './ui/renderer.js?v=2';
 
 const root = document.documentElement;
 const app = new App();

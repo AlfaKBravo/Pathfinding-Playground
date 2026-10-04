@@ -5,7 +5,7 @@ import { generateMaze } from '../core/maze.js';
 import { demoMap } from '../core/presets.js';
 import { Chase } from '../core/chase.js';
 import { Playback, VISITED } from './playback.js';
-import { Renderer } from './renderer.js';
+import { Renderer } from './renderer.js?v=2';
 
 /** Animation speeds for the speed slider, in search steps per second. */
 const SPEEDS = [2, 5, 10, 20, 40, 80, 160, 320, 640, 1500];
