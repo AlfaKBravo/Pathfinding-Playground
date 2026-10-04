@@ -7,7 +7,7 @@ const app = new App();
 const drawLegend = () => document.querySelectorAll('canvas[data-swatch]').forEach((c) => drawSwatch(c, c.dataset.swatch));
 drawLegend();
 
-/* Day / night edition, shared with the portfolio */
+/* Blueprint (default) or light drafting-sheet theme */
 const themeColor = document.querySelector('meta[name="theme-color"]');
 const applyTheme = () => {
   themeColor.content = getComputedStyle(root).getPropertyValue('--paper').trim();
@@ -15,7 +15,7 @@ const applyTheme = () => {
   drawLegend();
 };
 document.querySelector('#themeToggle').addEventListener('click', () => {
-  const next = root.dataset.theme === 'dark' ? 'light' : 'dark';
+  const next = root.dataset.theme === 'light' ? 'dark' : 'light';
   root.dataset.theme = next;
   try { localStorage.setItem('theme', next); } catch (e) { /* storage blocked */ }
   applyTheme();

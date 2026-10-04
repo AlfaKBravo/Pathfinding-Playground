@@ -19,7 +19,7 @@ export class Renderer {
     this.readTheme();
   }
 
-  /** Reads the colour tokens from CSS, so the board follows the day / night edition. */
+  /** Reads the colour tokens from CSS, so the board follows the blueprint or light theme. */
   readTheme() {
     const css = getComputedStyle(this.canvas);
     const token = (name) => css.getPropertyValue(name).trim();
@@ -93,7 +93,7 @@ export class Renderer {
 
     this.drawGridLines(t.ink);
     if (plan.length > 1) this.drawLine(grid, plan, t.spot, 0.14, [s * 0.3, s * 0.25]);
-    if (path.length > 1) this.drawLine(grid, path, t.ink, 0.16);
+    if (path.length > 1) this.drawLine(grid, path, t.spotInk, 0.16);
     if (start >= 0) this.drawMarker(grid, start, 'S', t.ink, t.paper, 'square');
     if (goal >= 0) this.drawMarker(grid, goal, 'G', t.spot, t.spotInk, 'square');
     for (const { cell, kind } of agents) {
@@ -264,7 +264,7 @@ export function drawSwatch(canvas, kind) {
   if (kind === 'visited') drawVisited(ctx, 0, 0, size, size, size, t.ink);
   if (kind === 'frontier') drawFrontier(ctx, 0, 0, size, t.spot);
   if (kind === 'path') {
-    ctx.strokeStyle = t.ink;
+    ctx.strokeStyle = t.spotInk;
     ctx.lineWidth = Math.max(2, size * 0.16);
     ctx.beginPath();
     ctx.moveTo(0, size / 2);

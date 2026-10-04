@@ -4,7 +4,9 @@ A browser playground that shows how search algorithms find a path. Draw walls an
 
 Plain JavaScript on an HTML canvas: no framework, no build step, no libraries. The priority queue is a hand-written binary heap.
 
-Project 03 in [Akshaj Kumar Bhardwaj's portfolio](https://github.com/AlfaKBravo).
+**Live demo:** <https://pathfinding-playground.vercel.app/>
+
+Project 01 in [Akshaj Kumar Bhardwaj's portfolio](https://github.com/AlfaKBravo).
 
 ## Features
 
@@ -21,7 +23,7 @@ Project 03 in [Akshaj Kumar Bhardwaj's portfolio](https://github.com/AlfaKBravo)
 | **Compare** | Run two algorithms side by side on the same map. |
 | **Import / export** | Save a map to JSON and load it back. |
 | **Phone and keyboard** | Touch drawing and an on-screen pad on phones. Every control works from the keyboard, including drawing on the board. |
-| **Day / night edition** | Follows the portfolio's "Instruction Booklet" design. |
+| **Blueprint theme** | A technical-drawing look: a dark blueprint by default, or a light drafting sheet. The highlight colour marks the frontier and the path. |
 
 ## Run it locally
 
@@ -101,7 +103,7 @@ The recursive backtracker treats odd (col, row) cells as rooms. From the current
 
 ```
 index.html            page and controls
-css/style.css         Instruction Booklet design tokens and layout
+css/style.css         Blueprint design tokens and layout
 js/main.js            entry point: theme toggle, legend
 js/core/              no DOM: runs in the browser and in Node tests
   heap.js             binary min-heap
